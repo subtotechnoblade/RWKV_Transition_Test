@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 def Normal(length=50, noise=True):
     output = np.zeros(shape=(100 * length,), dtype=np.float64)
     if noise:
+        output *= np.random.uniform(low=.35, high=3.0, size=(1,))
         output += np.random.uniform(low=-0.02, high=0.02, size=(100 * length,))
     return output.reshape((length, 100))
 
@@ -17,6 +18,7 @@ def Sin(length=50, noise=True):
     time = np.arange(100 * length) + offset
     output = np.sin(.1 * time)
     if noise:
+        output *= np.random.uniform(low=.35, high=3.0, size=(1,))
         output += np.random.uniform(low=-0.02, high=0.02, size=(100 * length,))
     return output.reshape((length, 100))
 
@@ -27,6 +29,7 @@ def Abs_Sin(length=50, noise=True):
 
     output = np.abs(np.sin(.1 * time))
     if noise:
+        output *= np.random.uniform(low=.35, high=3.0, size=(1,))
         output += np.random.uniform(low=-0.02, high=0.02, size=(100 * length,))
     return output.reshape((length, 100))
 
@@ -36,6 +39,7 @@ def Triangle(length=50, noise=True):
     time = np.arange(100 * length) + offset
     output = (2 / np.pi) * np.arcsin(np.sin(.1 * time))
     if noise:
+        output *= np.random.uniform(low=.35, high=3.0, size=(1,))
         output += np.random.uniform(low=-0.02, high=0.02, size=(100 * length,))
     return output.reshape((length, 100))
 
@@ -46,6 +50,7 @@ def Square(length=50, b=0.01, noise=True):
     sin_time = np.sin(time)
     output = sin_time / (((b ** 2) + (sin_time ** 2)) ** 0.5)
     if noise:
+        output *= np.random.uniform(low=.35, high=3.0, size=(1,))
         output += np.random.uniform(low=-0.02, high=0.02, size=(100 * length,))
     return output.reshape((length, 100))
 
@@ -55,6 +60,7 @@ def Saw_Tooth(length=50, period=30, noise=True):
     time = np.arange(100 * length) + offset
     output = 2 * ((time % period) / period) - 1
     if noise:
+        output *= np.random.uniform(low=.35, high=3.0, size=(1,))
         output += np.random.uniform(low=-0.02, high=0.02, size=(100 * length,))
 
     return output.reshape((length, 100))
@@ -86,8 +92,12 @@ def make_train_dataset(samples=16 * 100, time_steps=50, use_noise=True):
         label_template[-1] = chosen_type
         label = np.repeat(np.expand_dims(label_template, 0), time_steps, 0)
         y_train[i] = label
-    return np.array(x_train), np.array(y_train)
+    x_train, y_train = np.array(x_train), np.array(y_train)
 
+    multi_x_train, multi_y_train = make_test_dataset(int(samples * 0.01), time_steps, use_noise=use_noise)
+    x_train = np.concatenate((x_train, multi_x_train))
+    y_train = np.concatenate((y_train, multi_y_train))
+    return x_train, y_train
 def make_test_dataset(samples=16 * 100, time_steps=50, use_noise=True):
     x_test, y_test = [None] * samples, [None] * samples
     funcs = [Normal, Sin, Abs_Sin, Triangle, Square, Saw_Tooth]
