@@ -88,15 +88,15 @@ def make_train_dataset(samples=16 * 100, time_steps=50, use_noise=True):
         y_train[i] = label
     return np.array(x_train), np.array(y_train)
 
-def make_test_dataset(samples=16 * 100, use_noise=True):
+def make_test_dataset(samples=16 * 100, time_steps=50, use_noise=True):
     x_test, y_test = [None] * samples, [None] * samples
     funcs = [Normal, Sin, Abs_Sin, Triangle, Square, Saw_Tooth]
 
     for i in range(samples):
-        data = [None] * 50
-        label = [None] * 50
+        data = [None] * time_steps
+        label = [None] * time_steps
         label_template = np.ones((100,), dtype=np.float32) * -1
-        for j in range(50):
+        for j in range(time_steps):
             chosen_type = np.random.choice(np.arange(0, 6), size=(1,), p=[.4, .12, .12, .12, .12, .12])[0]
 
             data[j] = funcs[chosen_type](length=1, noise=use_noise)[0]
