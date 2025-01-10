@@ -26,7 +26,7 @@ def SCCA_general(y_true, y_pred):
 
     # Create a mask for non-zero labels and non-eight labels
     # Compute the total number of non-zero labels
-    non_zero_mask = tf.equal(y_true, -1.0)
+    non_zero_mask = tf.not_equal(y_true, -1.0)
     non_zero_count = tf.reduce_sum(tf.cast(non_zero_mask, tf.float32))
 
     # Compute matches only for non-zero labels
