@@ -11,16 +11,16 @@ def train():
                   loss=tf.keras.losses.SparseCategoricalCrossentropy(ignore_class=-1,),
                   metrics=[SCCA_general])
 
-    x_train, y_train = make_train_dataset(16 * 1000, 75, use_noise=True)
+    x_train, y_train = make_train_dataset(16 * 1000, 100, use_noise=True)
     # x_train, y_train = make_test_dataset(16 * 1000, 50, use_noise=False)
-    x_test, y_test = make_test_dataset(16 * 100, 100)
+    x_test, y_test = make_test_dataset(16 * 100, 500, use_noise=True)
 
     model.fit(x=x_train,
               y=y_train,
               validation_data=(x_test, y_test),
               shuffle=True,
               batch_size=16,
-              epochs=20)
+              epochs=10)
     model.save_weights("model.weights.h5")
 
 if __name__ == "__main__":

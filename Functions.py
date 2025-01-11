@@ -99,24 +99,25 @@ def make_train_dataset(samples=16 * 100, time_steps=50, use_noise=True):
     y_train = np.concatenate((y_train, multi_y_train))
     return x_train, y_train
 def make_test_dataset(samples=16 * 100, time_steps=50, use_noise=True):
+    np.random.seed()
     x_test, y_test = [None] * samples, [None] * samples
     funcs = [Normal, Sin, Abs_Sin, Triangle, Square, Saw_Tooth]
 
     for i in range(samples):
         data = [None] * time_steps
-        label = [None] * time_steps
-        label_template = np.ones((100,), dtype=np.float32) * -1
+        label = []
         for j in range(time_steps):
+            label_template = np.ones((100,), dtype=np.float32) * -1.0
             chosen_type = np.random.choice(np.arange(0, 6), size=(1,), p=[.4, .12, .12, .12, .12, .12])[0]
 
             data[j] = funcs[chosen_type](length=1, noise=use_noise)[0]
-
             label_template[-1] = chosen_type
-            label[j] = label_template
+
+            label.append(label_template)
 
         x_test[i] = data
         y_test[i] = label
-    return np.array(x_test), np.array(y_test)
+    return np.array(x_test, dtype=np.float32), np.array(y_test, dtype=np.float32)
 
 
 
@@ -134,7 +135,8 @@ if __name__ == "__main__":
     # print(x_train.shape)
     # print(y_train.shape)
     # make_test_dataset_func(Normal, Sin, Abs_Sin, Triangle, Square, Saw_Tooth)
-    x_test, y_test = make_test_dataset(16 * 2, True)
+    x_test, y_test = make_test_dataset(1, 100)
+    print(y_test[0][:, -1])
     print(x_test.shape)
     print(y_test.shape)
     # print(Normal())
